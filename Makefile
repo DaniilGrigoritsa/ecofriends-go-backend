@@ -15,4 +15,7 @@ run:
 
 start: build run
 
+generate-swag:
+	swag init -g ${SPOURCE_PATH} -o ./docs
+
 .PHONY: format tidy

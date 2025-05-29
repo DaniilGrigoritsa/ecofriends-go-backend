@@ -13,9 +13,9 @@ func LoadLikeRoutes(router chi.Router, db *sql.DB) {
 	like := &handler.Like{}
 	like.New(&repository.PostGreSQL{Database: db})
 
-	router.Get("/count/post_id={post_id}", like.GetLikeCount)
-	router.Get("/has_liked/post_id={post_id}/user_id={user_id}", like.HasLiked)
-	router.Get("/user_id={user_id}/limit={limit}/offset={offset}", like.GetLikesByUser)
+	router.Get("/count", like.GetLikeCount)
+	router.Get("/has_liked", like.HasLiked)
+	router.Get("/user_likes", like.GetLikesByUser)
 
 	router.With(middleware.AuthenticateMiddleware).Post("/like", like.LikePost)
 	router.With(middleware.AuthenticateMiddleware).Post("/unlike", like.UnlikePost)

@@ -8,7 +8,6 @@ import (
 
 	repository "github.com/ecofriends/authentication-backend/repository"
 	"github.com/ecofriends/authentication-backend/util"
-	"github.com/go-chi/chi/v5"
 )
 
 type Like struct {
@@ -19,6 +18,18 @@ func (like *Like) New(repo *repository.PostGreSQL) {
 	like.repo = repo
 }
 
+// @Summary Like a post
+// @Description Like a post as an authenticated user
+// @Tags likes
+// @Accept json
+// @Produce json
+// @Security CookieAuth
+// @Param like body util.LikePostRequestBody true "Post to like"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Router /likes/like [post]
 func (like *Like) LikePost(w http.ResponseWriter, r *http.Request) {
 	var body = util.LikePostRequestBody{}
 
@@ -47,6 +58,18 @@ func (like *Like) LikePost(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully liked post", http.StatusOK, nil)
 }
 
+// @Summary Unlike a post
+// @Description Unlike a post as an authenticated user
+// @Tags likes
+// @Accept json
+// @Produce json
+// @Security CookieAuth
+// @Param unlike body util.LikePostRequestBody true "Post to unlike"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Router /likes/unlike [post]
 func (like *Like) UnlikePost(w http.ResponseWriter, r *http.Request) {
 	var body = util.LikePostRequestBody{}
 
@@ -75,8 +98,16 @@ func (like *Like) UnlikePost(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully unliked post", http.StatusOK, nil)
 }
 
+// @Summary Get like count for a post
+// @Description Returns number of likes for the given post
+// @Tags likes
+// @Produce json
+// @Param post_id query int true "Post ID"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /likes/count [get]
 func (like *Like) GetLikeCount(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "post_id")
+	postId := r.URL.Query().Get("post_id")
 
 	postIdInt, err := strconv.Atoi(postId)
 	if err != nil {
@@ -93,9 +124,18 @@ func (like *Like) GetLikeCount(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully got like count for the post", http.StatusOK, likes)
 }
 
+// @Summary Check if user has liked a post
+// @Description Returns true if the user has liked the specified post
+// @Tags likes
+// @Produce json
+// @Param post_id query int true "Post ID"
+// @Param user_id query string true "User ID"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /likes/has_liked [get]
 func (like *Like) HasLiked(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "post_id")
-	userId := chi.URLParam(r, "user_id")
+	postId := r.URL.Query().Get("post_id")
+	userId := r.URL.Query().Get("user_id")
 
 	postIdInt, err := strconv.Atoi(postId)
 	if err != nil {
@@ -112,10 +152,21 @@ func (like *Like) HasLiked(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully got whether user has liked the post", http.StatusOK, hasLiked)
 }
 
+// @Summary Get liked posts by user
+// @Description Returns a paginated list of posts liked by the user
+// @Tags likes
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param limit query int true "Limit"
+// @Param offset query int true "Offset"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /likes/user_likes [get]
 func (like *Like) GetLikesByUser(w http.ResponseWriter, r *http.Request) {
-	limit := chi.URLParam(r, "limit")
-	offset := chi.URLParam(r, "offset")
-	userId := chi.URLParam(r, "user_id")
+	query := r.URL.Query()
+	limit := query.Get("limit")
+	offset := query.Get("offset")
+	userId := query.Get("user_id")
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {

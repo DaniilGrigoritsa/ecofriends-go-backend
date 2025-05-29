@@ -13,6 +13,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// SignUp handles user registration
+// @Summary Register a new user
+// @Description Create a new user account
+// @Tags authentication
+// @Accept json
+// @Produce json
+// @Param request body util.SignUpRequestBody true "Sign up credentials"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 500 {object} util.Response
+// @Router /auth/sign-up [post]
 func SignUp(dbService *service.DatabaseProvider, w http.ResponseWriter, r *http.Request) {
 	// Store the request body
 	var body = util.SignUpRequestBody{}

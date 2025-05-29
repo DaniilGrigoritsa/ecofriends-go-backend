@@ -21,6 +21,19 @@ func (post *Post) New(repo *repository.PostGreSQL) {
 	post.repo = repo
 }
 
+// CreatePost creates a new post
+// @Summary Create a new post
+// @Description Allows an authenticated user to create a new post
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param request body util.CreatePostRequestBody true "Post creation payload"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Security CookieAuth
+// @Router /posts/create [post]
 func (post *Post) CreatePost(w http.ResponseWriter, r *http.Request) {
 	var body = util.CreatePostRequestBody{}
 
@@ -50,6 +63,19 @@ func (post *Post) CreatePost(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully created post", http.StatusOK, thePost)
 }
 
+// DeletePost deletes a post
+// @Summary Delete a post
+// @Description Allows an authenticated user to delete their post
+// @Tags posts
+// @Accept json
+// @Produce json
+// @Param request body util.DeletePostRequestBody true "Post deletion payload"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Security CookieAuth
+// @Router /posts/delete [delete]
 func (post *Post) DeletePost(w http.ResponseWriter, r *http.Request) {
 	var body = util.DeletePostRequestBody{}
 
@@ -78,6 +104,16 @@ func (post *Post) DeletePost(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully deleted post", http.StatusOK, nil)
 }
 
+// GetPostByID fetches a single post by its ID
+// @Summary Get post by ID
+// @Description Returns a post based on its ID
+// @Tags posts
+// @Produce json
+// @Param id path int true "Post ID"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 500 {object} util.Response
+// @Router /posts/{id} [get]
 func (post *Post) GetPostByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	var msg = ""
@@ -105,9 +141,18 @@ func (post *Post) GetPostByID(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, msg, http.StatusOK, thePost)
 }
 
+// @Summary Get all posts
+// @Description Returns all posts with pagination
+// @Tags posts
+// @Produce json
+// @Param limit query int true "Limit number of posts"
+// @Param offset query int true "Offset for pagination"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /posts/all [get]
 func (post *Post) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	limit := chi.URLParam(r, "limit")
-	offset := chi.URLParam(r, "offset")
+	limit := r.URL.Query().Get("limit")
+	offset := r.URL.Query().Get("offset")
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
@@ -130,10 +175,20 @@ func (post *Post) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully got all posts", http.StatusOK, posts)
 }
 
+// @Summary Get posts by user
+// @Description Returns posts made by a specific user with pagination
+// @Tags posts
+// @Produce json
+// @Param user_id query string true "User ID"
+// @Param limit query int true "Limit number of posts"
+// @Param offset query int true "Offset for pagination"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /posts/user [get]
 func (post *Post) GetPostsByUser(w http.ResponseWriter, r *http.Request) {
-	limit := chi.URLParam(r, "limit")
-	offset := chi.URLParam(r, "offset")
-	userId := chi.URLParam(r, "user_id")
+	limit := r.URL.Query().Get("limit")
+	offset := r.URL.Query().Get("offset")
+	userId := r.URL.Query().Get("user_id")
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {

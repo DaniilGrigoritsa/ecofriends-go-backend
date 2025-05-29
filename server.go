@@ -46,6 +46,17 @@ Params:
 Returns:
   - No return value
 */
+
+// @title Ecofriends Go Backend
+// @version 1.0
+
+// @securityDefinitions.apikey CookieAuth
+// @in cookie
+// @name token
+// @description Enter your auth cookie (e.g., "token=abc123")
+
+// @host giving-vision-production.up.railway.app
+// @BasePath /
 func main() {
 	appDatabase, err := initDatabaseConnection()
 	if err != nil {

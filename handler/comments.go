@@ -19,6 +19,18 @@ func (comment *Comment) New(repo *repository.PostGreSQL) {
 	comment.repo = repo
 }
 
+// @Summary Create comment
+// @Description Creates a new comment on a post
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Security CookieAuth
+// @Param comment body util.CreateCommentRequestBody true "Create comment body"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Router /comments/create [post]
 func (comment *Comment) CreateComment(w http.ResponseWriter, r *http.Request) {
 	var body = util.CreateCommentRequestBody{}
 
@@ -48,6 +60,18 @@ func (comment *Comment) CreateComment(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully created comment", http.StatusOK, theComment)
 }
 
+// @Summary Delete comment
+// @Description Deletes an existing comment
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Security CookieAuth
+// @Param comment body util.DeleteCommentRequestBody true "Delete comment body"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Router /comments/delete [delete]
 func (comment *Comment) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	var body = util.DeleteCommentRequestBody{}
 
@@ -76,6 +100,18 @@ func (comment *Comment) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully deleted comment", http.StatusOK, nil)
 }
 
+// @Summary Update comment
+// @Description Updates an existing comment
+// @Tags comments
+// @Accept json
+// @Produce json
+// @Security CookieAuth
+// @Param comment body util.UpdateCommentRequestBody true "Update comment body"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 403 {object} util.Response
+// @Router /comments/update [put]
 func (comment *Comment) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	var body = util.UpdateCommentRequestBody{}
 
@@ -104,6 +140,14 @@ func (comment *Comment) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully updated comment", http.StatusOK, nil)
 }
 
+// @Summary Get comment by ID
+// @Description Returns a single comment by its ID
+// @Tags comments
+// @Produce json
+// @Param id path int true "Comment ID"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /comments/{id} [get]
 func (comment *Comment) GetCommentByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
@@ -122,10 +166,21 @@ func (comment *Comment) GetCommentByID(w http.ResponseWriter, r *http.Request) {
 	util.JsonResponse(w, "Successfully got comments by id", http.StatusOK, theComment)
 }
 
+// @Summary Get comments by post
+// @Description Returns comments on a specific post with pagination
+// @Tags comments
+// @Produce json
+// @Param post_id query int true "Post ID"
+// @Param limit query int true "Limit number of comments"
+// @Param offset query int true "Offset for pagination"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Router /comments/post [get]
 func (comment *Comment) GetCommentsByPost(w http.ResponseWriter, r *http.Request) {
-	limit := chi.URLParam(r, "limit")
-	offset := chi.URLParam(r, "offset")
-	postId := chi.URLParam(r, "post_id")
+	query := r.URL.Query()
+	limit := query.Get("limit")
+	offset := query.Get("offset")
+	postId := query.Get("post_id")
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {

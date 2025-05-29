@@ -1,0 +1,699 @@
+basePath: /
+definitions:
+  util.CreateCommentRequestBody:
+    properties:
+      post_id:
+        type: integer
+      text:
+        type: string
+      user_id:
+        type: string
+    type: object
+  util.CreatePostRequestBody:
+    properties:
+      text:
+        type: string
+      user_id:
+        type: string
+    type: object
+  util.DeleteCommentRequestBody:
+    properties:
+      comment_id:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  util.DeletePostRequestBody:
+    properties:
+      post_id:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  util.LikePostRequestBody:
+    properties:
+      post_id:
+        type: integer
+      user_id:
+        type: string
+    type: object
+  util.Response:
+    properties:
+      message:
+        type: string
+      payload: {}
+      success:
+        type: boolean
+    type: object
+  util.SignInRequestBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  util.SignUpRequestBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  util.UpdateCommentRequestBody:
+    properties:
+      comment_id:
+        type: integer
+      text:
+        type: string
+      user_id:
+        type: string
+    type: object
+host: giving-vision-production.up.railway.app
+info:
+  contact: {}
+  title: Ecofriends Go Backend
+  version: "1.0"
+paths:
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Log in an existing user
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/util.SignInRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Authenticate a user
+      tags:
+      - authentication
+  /auth/sign-out:
+    post:
+      consumes:
+      - application/json
+      description: Log out an existing user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Log out the user
+      tags:
+      - authentication
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Sign up credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/util.SignUpRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Register a new user
+      tags:
+      - authentication
+  /comments/{id}:
+    get:
+      description: Returns a single comment by its ID
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get comment by ID
+      tags:
+      - comments
+  /comments/create:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new comment on a post
+      parameters:
+      - description: Create comment body
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/util.CreateCommentRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Create comment
+      tags:
+      - comments
+  /comments/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an existing comment
+      parameters:
+      - description: Delete comment body
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/util.DeleteCommentRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Delete comment
+      tags:
+      - comments
+  /comments/post:
+    get:
+      description: Returns comments on a specific post with pagination
+      parameters:
+      - description: Post ID
+        in: query
+        name: post_id
+        required: true
+        type: integer
+      - description: Limit number of comments
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get comments by post
+      tags:
+      - comments
+  /comments/update:
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing comment
+      parameters:
+      - description: Update comment body
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/util.UpdateCommentRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Update comment
+      tags:
+      - comments
+  /likes/count:
+    get:
+      description: Returns number of likes for the given post
+      parameters:
+      - description: Post ID
+        in: query
+        name: post_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get like count for a post
+      tags:
+      - likes
+  /likes/has_liked:
+    get:
+      description: Returns true if the user has liked the specified post
+      parameters:
+      - description: Post ID
+        in: query
+        name: post_id
+        required: true
+        type: integer
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Check if user has liked a post
+      tags:
+      - likes
+  /likes/like:
+    post:
+      consumes:
+      - application/json
+      description: Like a post as an authenticated user
+      parameters:
+      - description: Post to like
+        in: body
+        name: like
+        required: true
+        schema:
+          $ref: '#/definitions/util.LikePostRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Like a post
+      tags:
+      - likes
+  /likes/unlike:
+    post:
+      consumes:
+      - application/json
+      description: Unlike a post as an authenticated user
+      parameters:
+      - description: Post to unlike
+        in: body
+        name: unlike
+        required: true
+        schema:
+          $ref: '#/definitions/util.LikePostRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Unlike a post
+      tags:
+      - likes
+  /likes/user_likes:
+    get:
+      description: Returns a paginated list of posts liked by the user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get liked posts by user
+      tags:
+      - likes
+  /posts/{id}:
+    get:
+      description: Returns a post based on its ID
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get post by ID
+      tags:
+      - posts
+  /posts/all:
+    get:
+      description: Returns all posts with pagination
+      parameters:
+      - description: Limit number of posts
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get all posts
+      tags:
+      - posts
+  /posts/create:
+    post:
+      consumes:
+      - application/json
+      description: Allows an authenticated user to create a new post
+      parameters:
+      - description: Post creation payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/util.CreatePostRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Create a new post
+      tags:
+      - posts
+  /posts/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Allows an authenticated user to delete their post
+      parameters:
+      - description: Post deletion payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/util.DeletePostRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Delete a post
+      tags:
+      - posts
+  /posts/user:
+    get:
+      description: Returns posts made by a specific user with pagination
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Limit number of posts
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: Get posts by user
+      tags:
+      - posts
+  /user:
+    get:
+      description: Basic health check or welcome route for user-related endpoints
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+      summary: User route home
+      tags:
+      - user
+  /user/{id}:
+    get:
+      description: Returns the user data if the requested ID matches the authenticated
+        user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/util.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/util.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.Response'
+      security:
+      - CookieAuth: []
+      summary: Get user by ID
+      tags:
+      - user
+securityDefinitions:
+  CookieAuth:
+    description: Enter your auth cookie (e.g., "token=abc123")
+    in: cookie
+    name: token
+    type: apiKey
+swagger: "2.0"

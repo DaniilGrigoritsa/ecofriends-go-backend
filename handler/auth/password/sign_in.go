@@ -10,6 +10,18 @@ import (
 	"github.com/ecofriends/authentication-backend/util"
 )
 
+// SignIn handles user login
+// @Summary Authenticate a user
+// @Description Log in an existing user
+// @Tags authentication
+// @Accept json
+// @Produce json
+// @Param request body util.SignInRequestBody true "Login credentials"
+// @Success 200 {object} util.Response
+// @Failure 400 {object} util.Response
+// @Failure 401 {object} util.Response
+// @Failure 500 {object} util.Response
+// @Router /auth/sign-in [post]
 func SignIn(dbService *service.DatabaseProvider, w http.ResponseWriter, r *http.Request) {
 	// Store the auth request body
 	var body = util.SignInRequestBody{}

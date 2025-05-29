@@ -14,8 +14,8 @@ func LoadPostRoutes(router chi.Router, db *sql.DB) {
 	post.New(&repository.PostGreSQL{Database: db})
 
 	router.Get("/{id}", post.GetPostByID)
-	router.Get("/all/limit={limit}/offset={offset}", post.GetAllPosts)
-	router.Get("/user_id={user_id}/limit={limit}/offset={offset}", post.GetPostsByUser)
+	router.Get("/all", post.GetAllPosts)
+	router.Get("/user", post.GetPostsByUser)
 
 	router.With(middleware.AuthenticateMiddleware).Post("/create", post.CreatePost)
 	router.With(middleware.AuthenticateMiddleware).Delete("/delete", post.DeletePost)

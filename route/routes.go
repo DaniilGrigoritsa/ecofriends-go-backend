@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"net/http"
 
+	_ "github.com/ecofriends/authentication-backend/docs"
 	"github.com/ecofriends/authentication-backend/util"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 /*
@@ -69,6 +71,9 @@ func LoadRoutes(db *sql.DB) *chi.Mux {
 	router.Route("/likes", func(router chi.Router) {
 		LoadLikeRoutes(router, db)
 	})
+
+	// Setup swagger route handlers
+	router.Get("/swagger/*", httpSwagger.Handler())
 
 	// Handle requests to undefined endpoints
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
